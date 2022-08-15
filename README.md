@@ -1,6 +1,6 @@
 ## install idm from url：
 
-`C:\Users\smaill\Downloads\Programs\idman641build2.exe`
+`https://mirror2.internetdownloadmanager.com/idman641build2.exe?v=lt&filename=idman641build2.exe`
 
 
 
