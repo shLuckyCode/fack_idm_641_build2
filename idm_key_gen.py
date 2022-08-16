@@ -99,8 +99,10 @@ def fack_IDM():
     offset_14B5 = 0x8BE2C
     offset_14D4 = 0x8E6CD
     offset_14BF = 0x8CC5F
-    offset_14C2 = 0x8BEAA #
-    offset_14EB = 0x8CC7E
+    offset_14C2 = 0x8BEAA
+    offset_14EB = 0x8CC7E #Virus
+    offset_14E7 = 0x8E4FF #fack
+    
     
     orgin_14B3 = b"\xE8\xA6\x64\x16\x00"
     orgin_14B5 = b"\xE8\xEC\x63\x16\x00"
@@ -108,11 +110,13 @@ def fack_IDM():
     orgin_14BF = b"\xE8\xB9\x55\x16\x00"
     orgin_14C2 = b"\x0F\x84\xFF\xE6\xFF\xFF"
     orgin_14EB = b"\xE8\x9A\x55\x16\x00"
-    
+    orgin_14E7 = b"\x0F\x84\xAA\xC0\xFF\xFF"
 
-    patch_code = b"\x90\x90\x90\x90\x90"
+    patch_code_nop = b"\x90\x90\x90\x90\x90"
     patch_14C2 = b"\xE9\x00\xE7\xFF\xFF\x90"
     patch_14D4 = b"\xEB\x26"
+    patch_14E7 = b"\xE9\xAB\xC0\xFF\xFF\x90"
+    
     
     sub_key = r"SOFTWARE\\DownloadManager"
     idm_path, type = QueryValue(sub_key, "ExePath")
@@ -134,16 +138,20 @@ def fack_IDM():
             False == check_code(f, offset_14D4, orgin_14D4, 2) or \
             False == check_code(f, offset_14BF, orgin_14BF, 5) or \
             False == check_code(f, offset_14C2, orgin_14C2, 6) or \
-            False == check_code(f, offset_14EB, orgin_14EB, 5):
+            False == check_code(f, offset_14EB, orgin_14EB, 5) or \
+            False == check_code(f, offset_14E7, orgin_14E7, 6):
                 raise Exception("already patched or version not match!") 
         
         #patch file
-        patch_code(f, offset_14B3, patch_code)
-        patch_code(f, offset_14B5, patch_code)
+        patch_code(f, offset_14B3, patch_code_nop)
+        patch_code(f, offset_14B5, patch_code_nop)
         patch_code(f, offset_14D4, patch_14D4)
-        patch_code(f, offset_14BF, patch_code)
+        patch_code(f, offset_14BF, patch_code_nop)
         patch_code(f, offset_14C2, patch_14C2)
-        patch_code(f, offset_14EB, patch_code)
+        patch_code(f, offset_14EB, patch_code_nop)
+        patch_code(f, offset_14E7, patch_14E7)
+        
+        
         f.flush()  
         f.close()
     except FileNotFoundError:
