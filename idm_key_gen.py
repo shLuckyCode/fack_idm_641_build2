@@ -3,7 +3,7 @@
 '''
 @File    :   idm_key_gen.py
 @Time    :   2022/06/15 13:09:28
-@Author  :   LiuRR
+@Author  :   smile
 @Contact :   smaill0702@gmail.com
 @        :   pip install pycryptodome 
              pip install wmi 
