@@ -3,7 +3,7 @@
 '''
 @File    :   idm_key_gen.py
 @Time    :   2022/06/15 13:09:28
-@Author  :   LiuRR
+@Author  :   smaill
 @Contact :   smaill0702@gmail.com
 @        :   pip install pycryptodome 
              pip install wmi 
@@ -75,6 +75,19 @@ def ecrypt_RC2(data, key, typt = ENCRYPT_MODE):
 
     return ecrypt_data
 
+def check_code(file, offset, origin_code,rSize):
+    file.seek(offset)
+    buff = file.read(rSize)
+    if buff == origin_code:
+        return True
+    
+    return False
+
+
+def patch_code(file, offset, patch_code):
+    file.seek(offset)
+    return file.write(patch_code)
+
 
 def fack_IDM():
     #image base = 0x400000
@@ -83,19 +96,21 @@ def fack_IDM():
     offset_14D4 = 0x8E6CD
     offset_14BF = 0x8CC5F
     offset_14C2 = 0x8BEAA #
+    offset_14EB = 0x8CC7E
     
     orgin_14B3 = b"\xE8\xA6\x64\x16\x00"
     orgin_14B5 = b"\xE8\xEC\x63\x16\x00"
     orgin_14D4 = b"\x74\x26"
     orgin_14BF = b"\xE8\xB9\x55\x16\x00"
     orgin_14C2 = b"\x0F\x84\xFF\xE6\xFF\xFF"
+    orgin_14EB = b"\xE8\x9A\x55\x16\x00"
     
     patch_14B3 = b"\x90\x90\x90\x90\x90"
     patch_14B5 = b"\x90\x90\x90\x90\x90"
-    patch_14D4 = b"\xEB\x26"
+    patch_14EB = b"\x90\x90\x90\x90\x90"
     patch_14BF = b"\x90\x90\x90\x90\x90"
     patch_14C2 = b"\xE9\x00\xE7\xFF\xFF\x90"
-    
+    patch_14D4 = b"\xEB\x26"
     
     sub_key = r"SOFTWARE\\DownloadManager"
     idm_path, type = QueryValue(sub_key, "ExePath")
@@ -109,51 +124,24 @@ def fack_IDM():
         copyfile(idm_path, idm_path_bak)
         print("[+] bak IDM to: {0}".format(idm_path_bak))
     try:
-        f =open(idm_path, 'rb+')
+        f = open(idm_path, 'rb+')
         
         #check file
-        f.seek(offset_14B3)
-        buff = f.read(5)
-        if buff != orgin_14B3:
-            raise Exception("already patched or version not match!")
-        
-        f.seek(offset_14B5)
-        buff = f.read(5)
-        if buff != orgin_14B5:
-            raise Exception("already patched or version not match!")     
-        
-        f.seek(offset_14D4)
-        buff = f.read(2)
-        if buff != orgin_14D4:
-            raise Exception("already patched or version not match!")
-        
-        f.seek(offset_14BF)
-        buff = f.read(5)
-        if buff != orgin_14BF:
-            raise Exception("already patched or version not match!") 
-        
-        f.seek(offset_14C2)
-        buff = f.read(6)
-        if buff != orgin_14C2:
-            raise Exception("already patched or version not match!") 
-        
+        if False == check_code(f,  offset_14B3, orgin_14B3, 5) or \
+            False == check_code(f, offset_14B5, orgin_14B5, 5) or \
+            False == check_code(f, offset_14D4, orgin_14D4, 2) or \
+            False == check_code(f, offset_14BF, orgin_14BF, 5) or \
+            False == check_code(f, offset_14C2, orgin_14C2, 6) or \
+            False == check_code(f, offset_14EB, orgin_14EB, 5):
+                raise Exception("already patched or version not match!") 
         
         #patch file
-        f.seek(offset_14B3)
-        nBytes = f.write(patch_14B3)
-        
-        f.seek(offset_14B5)
-        nBytes = f.write(patch_14B5)
-        
-        f.seek(offset_14D4)
-        nBytes = f.write(patch_14D4)
-        
-        f.seek(offset_14BF)
-        nBytes = f.write(patch_14BF)
-        
-        f.seek(offset_14C2)
-        nBytes = f.write(patch_14C2)
-        
+        patch_code(f, offset_14B3, patch_14B3)
+        patch_code(f, offset_14B5, patch_14B5)
+        patch_code(f, offset_14D4, patch_14D4)
+        patch_code(f, offset_14BF, patch_14BF)
+        patch_code(f, offset_14C2, patch_14C2)
+        patch_code(f, offset_14EB, patch_14EB)
         f.flush()  
         f.close()
     except FileNotFoundError:
