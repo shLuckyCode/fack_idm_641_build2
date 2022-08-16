@@ -3,7 +3,11 @@
 '''
 @File    :   idm_key_gen.py
 @Time    :   2022/06/15 13:09:28
+<<<<<<< HEAD
 @Author  :   smaill
+=======
+@Author  :   smile
+>>>>>>> 995ad5f2451eaee4a6a808686069fb9aa8a10265
 @Contact :   smaill0702@gmail.com
 @        :   pip install pycryptodome 
              pip install wmi 
@@ -105,10 +109,8 @@ def fack_IDM():
     orgin_14C2 = b"\x0F\x84\xFF\xE6\xFF\xFF"
     orgin_14EB = b"\xE8\x9A\x55\x16\x00"
     
-    patch_14B3 = b"\x90\x90\x90\x90\x90"
-    patch_14B5 = b"\x90\x90\x90\x90\x90"
-    patch_14EB = b"\x90\x90\x90\x90\x90"
-    patch_14BF = b"\x90\x90\x90\x90\x90"
+
+    patch_code = b"\x90\x90\x90\x90\x90"
     patch_14C2 = b"\xE9\x00\xE7\xFF\xFF\x90"
     patch_14D4 = b"\xEB\x26"
     
@@ -136,12 +138,12 @@ def fack_IDM():
                 raise Exception("already patched or version not match!") 
         
         #patch file
-        patch_code(f, offset_14B3, patch_14B3)
-        patch_code(f, offset_14B5, patch_14B5)
+        patch_code(f, offset_14B3, patch_code)
+        patch_code(f, offset_14B5, patch_code)
         patch_code(f, offset_14D4, patch_14D4)
-        patch_code(f, offset_14BF, patch_14BF)
+        patch_code(f, offset_14BF, patch_code)
         patch_code(f, offset_14C2, patch_14C2)
-        patch_code(f, offset_14EB, patch_14EB)
+        patch_code(f, offset_14EB, patch_code)
         f.flush()  
         f.close()
     except FileNotFoundError:
